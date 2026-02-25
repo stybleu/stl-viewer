@@ -7,8 +7,8 @@ UPLOAD_FOLDER = "uploads"
 ALLOWED_EXTENSIONS = {"stl"}
 
 app = Flask(__name__)
-app.secret_key = "dev"
-app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # 50MB
+app.secret_key = os.environ.get("SECRET_KEY", "b14246d2abe25466743f12914fcff6f12d64937aed07220d60be99363e0ae55e")
+app.config["MAX_CONTENT_LENGTH"] = 90 * 1024 * 1024  # 90MB
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
