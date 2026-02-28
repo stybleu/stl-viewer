@@ -19,8 +19,8 @@ ROOMS_FILE = "rooms.json"   # metadata (nom affiché, date création, etc.)
 ALLOWED_EXTENSIONS = {"stl"}
 
 # Render free: stockage éphémère → on assume "preview temporaire"
-MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
-MAX_FILE_AGE_SECONDS = 600 * 60         # 10 heure (change si tu veux)
+MAX_CONTENT_LENGTH = 500 * 1024 * 1024  # 500MB
+MAX_FILE_AGE_SECONDS = 60 * 60         # 1 heure (change si tu veux)
 
 # Identifiant public de room dans l'URL (non secret)
 ROOM_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{2,39}$")  # 3..40
