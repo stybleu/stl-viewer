@@ -51,11 +51,11 @@
 <body>
   <div class="bar">
     <div>
-      <b>{{ filename }}</b><br>
+      <b>{{ filename }}</b><br><span style="font-size:12px;color:#666">Room : {{ room_name }}</span><br>
       <span style="font-size:12px;color:#666">Drag = tourner • Molette = zoom • (mobile) 1 doigt = tourner, 2 doigts = zoom</span>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <a class="btn" href="{{ url_for('index') }}">⬅ Retour</a>
+      <a class="btn" href="{{ url_for('room', room_slug=room_slug) }}">⬅ Room</a>
       <a class="btn" href="{{ file_url }}" target="_blank">Ouvrir le STL</a>
     </div>
   </div>
@@ -79,9 +79,10 @@
   </script>
 
   <!-- Libs Three en CDN + messages clairs -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/loaders/STLLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/loaders/STLLoader.js"></script>
+
   <!-- ✅ Code viewer INLINE (plus de viewer.js) -->
   <script>
     (function(){
@@ -141,14 +142,32 @@
           geo.computeVertexNormals();
           const mat = new THREE.MeshStandardMaterial({ color: 0x99ccff });
           const mesh = new THREE.Mesh(geo, mat);
+
+          // ✅ Redresse le STL (Z-up → Y-up)
+          // La plupart des STL d'impression 3D sont en Z-up (Cura/Prusa/Fusion/FreeCAD).
+          // Three.js est Y-up.
+          mesh.rotation.x = -Math.PI / 2;
+
           scene.add(mesh);
 
-          // centre
+          // 📦 recalcul après rotation
           const box = new THREE.Box3().setFromObject(mesh);
           const center = box.getCenter(new THREE.Vector3());
           mesh.position.sub(center);
 
-          setStatus("STL chargé ✅");
+          // 📏 dimensions (hypothèse : 1 unité STL = 1 mm)
+          const size = box.getSize(new THREE.Vector3());
+          const dimX = size.x.toFixed(2);
+          const dimY = size.y.toFixed(2);
+          const dimZ = size.z.toFixed(2);
+
+          setStatus(
+            "STL chargé ✅\n\n" +
+            "Dimensions :\n" +
+            "X : " + dimX + " mm\n" +
+            "Y : " + dimY + " mm\n" +
+            "Z : " + dimZ + " mm"
+          );
         },
         (xhr) => {
           if (xhr && xhr.total) {
